@@ -1,10 +1,13 @@
+streamlit
+plotly==6.5.2
 pandas==3.0.2
 numpy==2.4.4
-requests==2.34.2
-tensorflow==2.20.0
-keras==3.15.0
+scipy==1.15.2
 scikit-learn==1.6.1
-sfdmap==0.1.1
+xgboost==3.1.2
+joblib==1.4.2
+requests==2.34.2
 astropy==8.0.1
 dust_extinction==1.6
+sfdmap==0.1.1
 alerce==2.3.1
