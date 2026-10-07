@@ -8,7 +8,6 @@ from xgb_predict import predict_object
 
 st.set_page_config(page_title="Transient Classifier", page_icon="✨", layout="centered")
 
-GROUPS = ["AGN", "SN", "TDE"]
 COLORS = {"AGN": "#e8743b", "SN": "#3b8ee8", "TDE": "#8e44ad", "Other": "#999999"}
 EXAMPLES = {
     "— pick an example —": "",
@@ -31,20 +30,6 @@ def group_probs(probs):
 @st.cache_data(show_spinner=False)
 def run(oid):
     return predict_object(oid, broker="alerce")
-
-
-def ternary_plot(g):
-    fig = go.Figure(go.Scatterternary(
-        a=[g["AGN"]], b=[g["SN"]], c=[g["TDE"]], mode="markers",
-        marker=dict(size=16, color="#d62728", line=dict(width=2, color="white")),
-        hovertemplate="AGN %{a:.1%}<br>SN %{b:.1%}<br>TDE %{c:.1%}<extra></extra>"))
-    fig.update_layout(
-        ternary=dict(sum=1,
-                     aaxis=dict(title="AGN", min=0, tickformat=".0%"),
-                     baxis=dict(title="SN", min=0, tickformat=".0%"),
-                     caxis=dict(title="TDE", min=0, tickformat=".0%")),
-        margin=dict(l=40, r=40, t=20, b=20), height=420, showlegend=False)
-    return fig
 
 
 st.title("Transient Event Classifier")
@@ -75,11 +60,6 @@ if st.button("Classify", type="primary", disabled=not oid):
     c1, c2 = st.columns(2)
     c1.metric("Most likely class", top)
     c2.metric("Probability", f"{g[top]:.1%}")
-
-    if all(k in g for k in GROUPS):
-        st.plotly_chart(ternary_plot(g), use_container_width=True)
-        st.caption("Corners are pure classes; the closer the dot is to a corner, the more "
-                   "confident the model is. A dot near the centre means the model can't separate them.")
 
     df = pd.DataFrame({"class": list(g), "probability": list(g.values())}).sort_values("probability")
     bar = go.Figure(go.Bar(x=df["probability"], y=df["class"], orientation="h",
